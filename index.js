@@ -18,6 +18,7 @@ async function run() {
         await client.connect()
 
         const productCollection = client.db('carpentryz').collection('products')
+        const orderCollection = client.db('carpentryz').collection('orders')
 
         app.get('/products', async (req, res) => {
             const query = {}
@@ -31,7 +32,20 @@ async function run() {
             const query = { _id: ObjectId(id) }
             const result = await productCollection.findOne(query)
             res.send({ success: true, result })
-            console.log(result)
+        })
+
+        app.patch('/products/:id', async (req, res) => {
+            const id = req.params.id
+            const quantity = req.body
+            const filter = { _id: ObjectId(id) }
+            const updateDoc = {
+                $set: {
+                    availableQuantity: quantity.newQuantity
+                }
+            }
+            const result = await productCollection.updateOne(filter, updateDoc)
+            res.send({ success: true, result, updateDoc })
+            console.log(result, updateDoc)
         })
 
         // adding a product
@@ -39,6 +53,13 @@ async function run() {
             const product = req.body
             const result = await productCollection.insertOne(product)
             res.send({ success: true, result, product })
+        })
+
+        //order
+        app.post('/order', async (req, res) => {
+            const order = req.body
+            const result = await orderCollection.insertOne(order)
+            res.send({ success: true, result, order })
         })
     }
     finally {
