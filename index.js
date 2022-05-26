@@ -63,6 +63,13 @@ async function run() {
             console.log(result)
         })
 
+        app.get('/order/:id', async (req, res) => {
+            const id = req.params.id
+            const query = { _id: ObjectId(id) }
+            const result = await orderCollection.findOne(query)
+            res.send({ success: true, result })
+        })
+
         app.post('/order', async (req, res) => {
             const order = req.body
             const result = await orderCollection.insertOne(order)
