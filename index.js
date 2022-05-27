@@ -20,23 +20,6 @@ async function run() {
         const orderCollection = client.db('carpentryz').collection('orders')
         const paymentCollection = client.db('carpentryz').collection('payments')
 
-        app.post('/create-payment-intent', async (req, res) => {
-            /*  const service = req.body
-             const price = service.price */
-            const { price } = req.body
-            const amount = price * 100
-
-            const paymentIntent = await stripe.paymentIntents.create({
-                amount: amount,
-                currency: 'usd',
-                payment_method_types: [
-                    'card'
-                ]
-
-            })
-            res.send({ clientSecret: paymentIntent.client_secret })
-        })
-
         app.get('/products', async (req, res) => {
             const query = {}
             const products = await productCollection.find(query).limit(6).toArray()
