@@ -20,6 +20,7 @@ async function run() {
         const productCollection = client.db('carpentryz').collection('products')
         const orderCollection = client.db('carpentryz').collection('orders')
         const paymentCollection = client.db('carpentryz').collection('payments')
+        const reviewCollection = client.db('carpentryz').collection('reviews')
 
         app.post("/create-payment-intent", async (req, res) => {
             const { price } = req.body
@@ -109,6 +110,18 @@ async function run() {
             const email = req.params.email
             const query = { email: email }
             const result = await orderCollection.deleteOne(query)
+            res.send({ success: true, result })
+        })
+
+        //review
+        app.get('/review', async (req, res) => {
+            const query = {}
+            const result = await reviewCollection.find(query).toArray()
+            res.send({ success: true, result })
+        })
+        app.post('/review', async (req, res) => {
+            const review = req.body
+            const result = await reviewCollection.insertOne(review)
             res.send({ success: true, result })
         })
     }
