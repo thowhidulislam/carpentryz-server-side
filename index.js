@@ -21,6 +21,7 @@ async function run() {
         const orderCollection = client.db('carpentryz').collection('orders')
         const paymentCollection = client.db('carpentryz').collection('payments')
         const reviewCollection = client.db('carpentryz').collection('reviews')
+        const userCollection = client.db('carpentryz').collection('users')
 
         app.post("/create-payment-intent", async (req, res) => {
             const { price } = req.body
@@ -124,6 +125,29 @@ async function run() {
             const result = await reviewCollection.insertOne(review)
             res.send({ success: true, result })
         })
+
+        //user
+        app.get('/user/:email', async (req, res) => {
+            const email = req.params.email
+            console.log(email)
+            const query = { email: email }
+            console.log(query)
+            const result = await userCollection.findOne(query)
+            console.log(result)
+            res.send({ success: true, result })
+        })
+        app.put('/user/:email', async (req, res) => {
+            const email = req.params.email
+            const user = req.body
+            const filter = { email: email }
+            const options = { upsert: true }
+            const updateDoc = {
+                $set: user
+            }
+            const result = await userCollection.updateOne(filter, updateDoc, options)
+            res.send({ success: true, result })
+        })
+
     }
     finally {
 
