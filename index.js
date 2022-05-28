@@ -67,6 +67,11 @@ async function run() {
             const products = await productCollection.find(query).limit(6).toArray()
             res.send({ success: true, products })
         })
+        app.get('/allProducts', async (req, res) => {
+            const result = await productCollection.find().toArray()
+            res.send({ success: true, result })
+            console.log(result)
+        })
 
         app.get('/products/:id', async (req, res) => {
             const id = req.params.id
@@ -95,6 +100,13 @@ async function run() {
             const product = req.body
             const result = await productCollection.insertOne(product)
             res.send({ success: true, result, product })
+        })
+
+        app.delete('/deleteProducts/:id', async (req, res) => {
+            const id = req.params.id
+            const filter = { _id: ObjectId(id) }
+            const result = await productCollection.deleteOne(filter)
+            res.send({ success: true, result })
         })
 
         //order
