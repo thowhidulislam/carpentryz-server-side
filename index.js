@@ -80,17 +80,29 @@ async function run() {
         })
 
         app.get('/allOrders', async (req, res) => {
-            const query = {}
-            const result = await orderCollection.find(query).toArray()
+            const result = await orderCollection.find().toArray()
             res.send({ success: true, result })
         })
 
-        app.patch('/order/admin/:id', async (req, res) => {
+        app.patch('/order/admin/paid/:id', async (req, res) => {
             const id = req.params.id
             const filter = { _id: ObjectId(id) }
             const updateDoc = {
                 $set: {
                     paid: true,
+                    confirm: true
+                }
+            }
+            const updatedOrder = await orderCollection.updateOne(filter, updateDoc)
+            res.send(updateDoc)
+        })
+
+        app.patch('/order/admin/shipped/:id', async (req, res) => {
+            const id = req.params.id
+            const filter = { _id: ObjectId(id) }
+            const updateDoc = {
+                $set: {
+                    shipping: 'true',
                 }
             }
             const updatedOrder = await orderCollection.updateOne(filter, updateDoc)
@@ -130,6 +142,13 @@ async function run() {
             const email = req.params.email
             const query = { email: email }
             const result = await orderCollection.deleteOne(query)
+            res.send({ success: true, result })
+        })
+
+        app.delete('/order/admin/:id', async (req, res) => {
+            const id = req.params.id
+            const filter = { _id: ObjectId(id) }
+            const result = await orderCollection.deleteOne(filter)
             res.send({ success: true, result })
         })
 
