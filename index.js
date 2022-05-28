@@ -79,6 +79,24 @@ async function run() {
             console.log(result)
         })
 
+        app.get('/allOrders', async (req, res) => {
+            const query = {}
+            const result = await orderCollection.find(query).toArray()
+            res.send({ success: true, result })
+        })
+
+        app.patch('/order/admin/:id', async (req, res) => {
+            const id = req.params.id
+            const filter = { _id: ObjectId(id) }
+            const updateDoc = {
+                $set: {
+                    paid: true,
+                }
+            }
+            const updatedOrder = await orderCollection.updateOne(filter, updateDoc)
+            res.send(updateDoc)
+        })
+
         app.get('/order/:id', async (req, res) => {
             const id = req.params.id
             const query = { _id: ObjectId(id) }
@@ -92,6 +110,7 @@ async function run() {
             const filter = { _id: ObjectId(id) }
             const updateDoc = {
                 $set: {
+                    pending: true,
                     paid: true,
                     transactionId: payment.transactionId
                 }
