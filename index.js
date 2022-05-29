@@ -39,6 +39,7 @@ async function run() {
         const reviewCollection = client.db('carpentryz').collection('reviews')
         const userCollection = client.db('carpentryz').collection('users')
         const messageCollection = client.db('carpentryz').collection('messages')
+        const adminCollection = client.db('carpentryz').collection('admins')
 
         app.post("/create-payment-intent", async (req, res) => {
             const { price } = req.body
@@ -63,18 +64,18 @@ async function run() {
             }
         }
 
-        app.get('/products', async (req, res) => {
+        app.get('/products', verifyJWT, async (req, res) => {
             const query = {}
             const products = await productCollection.find(query).limit(6).toArray()
             res.send({ success: true, products })
         })
-        app.get('/allProducts', async (req, res) => {
+        app.get('/allProducts', verifyJWT, verifyAdmin, async (req, res) => {
             const result = await productCollection.find().toArray()
             res.send({ success: true, result })
             console.log(result)
         })
 
-        app.get('/products/:id', async (req, res) => {
+        app.get('/products/:id', verifyJWT, async (req, res) => {
             const id = req.params.id
             console.log(id)
             const query = { _id: ObjectId(id) }
@@ -82,7 +83,7 @@ async function run() {
             res.send({ success: true, result })
         })
 
-        app.patch('/products/:id', async (req, res) => {
+        app.patch('/products/:id', verifyJWT, async (req, res) => {
             const id = req.params.id
             const quantity = req.body
             const filter = { _id: ObjectId(id) }
@@ -97,13 +98,13 @@ async function run() {
         })
 
         // adding a product
-        app.post('/products', async (req, res) => {
+        app.post('/products', verifyJWT, verifyAdmin, async (req, res) => {
             const product = req.body
             const result = await productCollection.insertOne(product)
             res.send({ success: true, result, product })
         })
 
-        app.delete('/deleteProducts/:id', async (req, res) => {
+        app.delete('/deleteProducts/:id', verifyJWT, verifyAdmin, async (req, res) => {
             const id = req.params.id
             const filter = { _id: ObjectId(id) }
             const result = await productCollection.deleteOne(filter)
@@ -111,7 +112,7 @@ async function run() {
         })
 
         //order
-        app.get('/order', async (req, res) => {
+        app.get('/order', verifyJWT, async (req, res) => {
             const email = req.query.email
             const query = { email: email }
             const result = await orderCollection.find(query).toArray()
@@ -119,7 +120,7 @@ async function run() {
             console.log(result)
         })
 
-        app.get('/allOrders', async (req, res) => {
+        app.get('/allOrders', verifyJWT, verifyAdmin, async (req, res) => {
             const result = await orderCollection.find().toArray()
             res.send({ success: true, result })
         })
@@ -185,7 +186,7 @@ async function run() {
             res.send({ success: true, result })
         })
 
-        app.delete('/order/admin/:id', async (req, res) => {
+        app.delete('/order/admin/:id', verifyJWT, verifyAdmin, async (req, res) => {
             const id = req.params.id
             const filter = { _id: ObjectId(id) }
             const result = await orderCollection.deleteOne(filter)
@@ -205,7 +206,7 @@ async function run() {
         })
 
         //user
-        app.get('/user', async (req, res) => {
+        app.get('/user', verifyJWT, async (req, res) => {
             const allUsers = await userCollection.find().toArray()
             res.send({ success: true, allUsers })
             console.log(allUsers)
@@ -244,14 +245,14 @@ async function run() {
             res.send({ result, token })
         })
 
-        app.delete('/admin/delete/:email', async (req, res) => {
+        app.delete('/admin/delete/:email', verifyJWT, verifyAdmin, async (req, res) => {
             const email = req.params.email
             const filter = { email: email }
             const result = await userCollection.deleteOne(filter)
             res.send({ success: true, result })
         })
         //admin
-        app.get('/admin/allUsers', async (req, res) => {
+        app.get('/admin/allUsers', verifyJWT, verifyAdmin, async (req, res) => {
             const result = await userCollection.find().toArray()
             res.send({ success: true, result })
             console.log(result)
@@ -264,7 +265,7 @@ async function run() {
             console.log(isAdmin)
         })
 
-        app.put('/user/admin/:email', async (req, res) => {
+        app.put('/user/admin/:email', verifyJWT, verifyAdmin, async (req, res) => {
             const email = req.params.email
             const filter = { email: email }
             const updateDoc = {
