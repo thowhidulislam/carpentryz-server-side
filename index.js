@@ -38,6 +38,7 @@ async function run() {
         const paymentCollection = client.db('carpentryz').collection('payments')
         const reviewCollection = client.db('carpentryz').collection('reviews')
         const userCollection = client.db('carpentryz').collection('users')
+        const messageCollection = client.db('carpentryz').collection('messages')
 
         app.post("/create-payment-intent", async (req, res) => {
             const { price } = req.body
@@ -271,6 +272,12 @@ async function run() {
             }
             const result = await userCollection.updateOne(filter, updateDoc)
             res.send({ success: true, result })
+        })
+
+        app.post('/contact', async (req, res) => {
+            const message = req.body
+            const result = await messageCollection.insertOne(message)
+            res.send({ success: result, result })
         })
 
     }
