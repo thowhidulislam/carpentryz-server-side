@@ -39,7 +39,6 @@ async function run() {
         const reviewCollection = client.db('carpentryz').collection('reviews')
         const userCollection = client.db('carpentryz').collection('users')
         const messageCollection = client.db('carpentryz').collection('messages')
-        const adminCollection = client.db('carpentryz').collection('admins')
 
         app.post("/create-payment-intent", async (req, res) => {
             const { price } = req.body
