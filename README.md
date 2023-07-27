@@ -1,6 +1,6 @@
 # Carpentryz
 
-## You can see live website [here](https://carpentryz.web.app/)
+## You can see live website [here](https://carpentryz.netlify.app)
 
 ## Functionality
 - Used jwt token for verifying user.
