@@ -69,12 +69,10 @@ async function run() {
 
     app.get("/products", async (req, res) => {
       const products = await productCollection.find({}).limit(6).toArray();
-      console.log(products);
       res.send({ success: true, products });
     });
     app.get("/allProducts", async (req, res) => {
       const result = await productCollection.find().toArray();
-      console.log(result);
       res.send({ success: true, result });
     });
 
@@ -96,7 +94,6 @@ async function run() {
       };
       const result = await productCollection.updateOne(filter, updateDoc);
       res.send({ success: true, result, updateDoc });
-      console.log(result, updateDoc);
     });
 
     // adding a product
@@ -204,7 +201,6 @@ async function run() {
     app.get("/review", async (req, res) => {
       const query = {};
       const result = await reviewCollection.find(query).toArray();
-      console.log(result);
       res.send({ success: true, result });
     });
     app.post("/review", async (req, res) => {
