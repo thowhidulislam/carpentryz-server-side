@@ -121,7 +121,6 @@ async function run() {
       const query = { email: email };
       const result = await orderCollection.find(query).toArray();
       res.send({ success: true, result });
-      console.log(result);
     });
 
     app.get("/allOrders", verifyJWT, verifyAdmin, async (req, res) => {
@@ -213,14 +212,12 @@ async function run() {
     app.get("/user", verifyJWT, async (req, res) => {
       const allUsers = await userCollection.find().toArray();
       res.send({ success: true, allUsers });
-      console.log(allUsers);
     });
     app.get("/user/:email", async (req, res) => {
       const email = req.params.email;
       const query = { email: email };
       const result = await userCollection.findOne(query);
       res.send({ success: true, result });
-      console.log(result);
     });
     app.put("/user/profile/:email", async (req, res) => {
       const email = req.params.email;
@@ -249,7 +246,6 @@ async function run() {
           expiresIn: "7d",
         }
       );
-      console.log(token);
       res.send({ result, token });
     });
 
@@ -268,14 +264,12 @@ async function run() {
     app.get("/admin/allUsers", verifyJWT, verifyAdmin, async (req, res) => {
       const result = await userCollection.find().toArray();
       res.send({ success: true, result });
-      console.log(result);
     });
     app.get("/admin/:email", async (req, res) => {
       const email = req.params.email;
       const user = await userCollection.findOne({ email: email });
       const isAdmin = user?.role === "admin";
       res.send({ success: true, admin: isAdmin });
-      console.log(isAdmin);
     });
 
     app.put("/user/admin/:email", verifyJWT, verifyAdmin, async (req, res) => {
